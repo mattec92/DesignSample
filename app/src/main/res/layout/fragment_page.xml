@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_margin="10dp">
 
-        <ScrollView
+        <se.mattec.design.views.CustomScrollView
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -86,7 +86,7 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </se.mattec.design.views.CustomScrollView>
 
     </android.support.v7.widget.CardView>
 
