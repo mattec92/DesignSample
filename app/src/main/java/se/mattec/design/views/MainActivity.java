@@ -1,6 +1,8 @@
 package se.mattec.design.views;
 
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -56,6 +58,12 @@ public class MainActivity
     @BindColor(R.color.blue_grey)
     protected int COLOR_4;
 
+    @BindColor(R.color.white)
+    protected int COLOR_WHITE;
+
+    @BindColor(R.color.black)
+    protected int COLOR_BLACK;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -81,7 +89,17 @@ public class MainActivity
             @Override
             public void onPageScrolled(int position, int scrollY, float ratio)
             {
-
+                //Only react to scroll events for current fragment.
+                if (mViewPager.getCurrentItem() == position)
+                {
+                    int color = mixColors(COLOR_WHITE, COLOR_BLACK, ratio);
+                    mToolbar.setTitleTextColor(color);
+                    Drawable overflowIcon = mToolbar.getOverflowIcon();
+                    if (overflowIcon != null)
+                    {
+                        overflowIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                    }
+                }
             }
         });
         mViewPager.setAdapter(adapter);
