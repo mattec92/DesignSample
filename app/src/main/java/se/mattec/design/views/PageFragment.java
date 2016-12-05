@@ -109,7 +109,7 @@ public class PageFragment
                     prevY = 0;
                 }
 
-                float ratio = Math.min(1f, (float) (prevY >= 0 ? ((y + prevY) / 2) : y) / CARD_TOP_MARGIN);
+                float ratio = Math.min(1f, Math.max(0f, (float) (prevY >= 0 ? ((y + prevY) / 2) : y) / CARD_TOP_MARGIN));
                 float invertedRatio = (1f - ratio);
 
                 if (mListener != null)
