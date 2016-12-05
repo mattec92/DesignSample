@@ -14,6 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import se.mattec.design.R;
 import se.mattec.design.adapters.PageAdapter;
+import se.mattec.design.interfaces.PageListener;
 
 public class PageFragment
         extends Fragment
@@ -43,15 +44,22 @@ public class PageFragment
     protected float VIEWPAGER_PADDING;
 
     private int mPosition;
+    private PageListener mListener;
 
-    public static PageFragment newInstance(int position)
+    public static PageFragment newInstance(int position, PageListener listener)
     {
         Bundle args = new Bundle();
         args.putInt(EXTRAS_POSITION, position);
 
         PageFragment fragment = new PageFragment();
         fragment.setArguments(args);
+        fragment.setListener(listener);
         return fragment;
+    }
+
+    private void setListener(PageListener listener)
+    {
+        mListener = listener;
     }
 
     @Nullable
@@ -103,6 +111,11 @@ public class PageFragment
 
                 float ratio = Math.min(1f, (float) (prevY >= 0 ? ((y + prevY) / 2) : y) / CARD_TOP_MARGIN);
                 float invertedRatio = (1f - ratio);
+
+                if (mListener != null)
+                {
+                    mListener.onPageScrolled(mPosition, y, ratio);
+                }
 
                 if (ratio == 1f)
                 {

@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import se.mattec.design.R;
 import se.mattec.design.adapters.PageAdapter;
+import se.mattec.design.interfaces.PageListener;
 
 public class MainActivity
         extends AppCompatActivity
@@ -74,7 +75,15 @@ public class MainActivity
 
     private void setupViewPager()
     {
-        PageAdapter adapter = new PageAdapter(getSupportFragmentManager());
+        PageAdapter adapter = new PageAdapter(getSupportFragmentManager(), new PageListener()
+        {
+
+            @Override
+            public void onPageScrolled(int position, int scrollY, float ratio)
+            {
+
+            }
+        });
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(PageAdapter.NUM_PAGES);
         mViewPager.setPageMargin((int) PAGE_MARGIN);
