@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import butterknife.BindColor;
 import butterknife.BindDimen;
@@ -59,7 +63,13 @@ public class MainActivity
 
         ButterKnife.bind(this);
 
+        setupToolbar();
         setupViewPager();
+    }
+
+    private void setupToolbar()
+    {
+        setSupportActionBar(mToolbar);
     }
 
     private void setupViewPager()
@@ -124,6 +134,27 @@ public class MainActivity
         int diffBlue = toBlue - fromBlue;
 
         return Color.rgb((int) (fromRed + diffRed * ratio), (int) (fromGreen + diffGreen * ratio), (int) (fromBlue + diffBlue * ratio));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.menu_item_mock:
+                Toast.makeText(this, "Clicked menu item.", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }
