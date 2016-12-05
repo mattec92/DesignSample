@@ -1,11 +1,13 @@
 package se.mattec.design.views;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.FrameLayout;
 
+import butterknife.BindColor;
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +36,21 @@ public class MainActivity
     @BindDimen(R.dimen.negateive_viewpager_padding)
     protected float PAGE_MARGIN;
 
+    @BindColor(R.color.colorPrimary)
+    protected int COLOR_0;
+
+    @BindColor(R.color.cyan)
+    protected int COLOR_1;
+
+    @BindColor(R.color.teal)
+    protected int COLOR_2;
+
+    @BindColor(R.color.deep_purple)
+    protected int COLOR_3;
+
+    @BindColor(R.color.blue_grey)
+    protected int COLOR_4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -57,7 +74,7 @@ public class MainActivity
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
-
+                mContainer.setBackgroundColor(mixColors(getColorForPosition(position), getColorForPosition(position + 1), positionOffset));
             }
 
             @Override
@@ -72,6 +89,41 @@ public class MainActivity
 
             }
         });
+    }
+
+    private int getColorForPosition(int position)
+    {
+        switch (position)
+        {
+            case 0:
+                return COLOR_0;
+            case 1:
+                return COLOR_1;
+            case 2:
+                return COLOR_2;
+            case 3:
+                return COLOR_3;
+            case 4:
+                return COLOR_4;
+        }
+        return COLOR_0;
+    }
+
+    private int mixColors(int fromColor, int toColor, float ratio)
+    {
+        int fromRed = Color.red(fromColor);
+        int toRed = Color.red(toColor);
+        int diffRed = toRed - fromRed;
+
+        int fromGreen = Color.green(fromColor);
+        int toGreen = Color.green(toColor);
+        int diffGreen = toGreen - fromGreen;
+
+        int fromBlue = Color.blue(fromColor);
+        int toBlue = Color.blue(toColor);
+        int diffBlue = toBlue - fromBlue;
+
+        return Color.rgb((int) (fromRed + diffRed * ratio), (int) (fromGreen + diffGreen * ratio), (int) (fromBlue + diffBlue * ratio));
     }
 
 }
