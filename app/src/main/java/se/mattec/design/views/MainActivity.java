@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.FrameLayout;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import se.mattec.design.R;
 import se.mattec.design.adapters.PageAdapter;
-import se.mattec.design.interfaces.PageListener;
 
 public class MainActivity
         extends AppCompatActivity
@@ -26,6 +25,15 @@ public class MainActivity
     @BindView(R.id.viewpager)
     protected ViewPager mViewPager;
 
+    @BindDimen(R.dimen.card_top_margin)
+    protected float CARD_TOP_MARGIN;
+
+    @BindDimen(R.dimen.viewpager_padding)
+    protected float VIEWPAGER_PADDING;
+
+    @BindDimen(R.dimen.negateive_viewpager_padding)
+    protected float PAGE_MARGIN;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -39,17 +47,31 @@ public class MainActivity
 
     private void setupViewPager()
     {
-        PageAdapter adapter = new PageAdapter(getSupportFragmentManager(), new PageListener()
+        PageAdapter adapter = new PageAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(adapter);
+        mViewPager.setOffscreenPageLimit(PageAdapter.NUM_PAGES);
+        mViewPager.setPageMargin((int) PAGE_MARGIN);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
 
             @Override
-            public void onPageScrolled(int position, int scrollY)
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
-                Log.d(MainActivity.class.getSimpleName(), String.format("onPageScrolled, position: %d, scrollY: %d", position, scrollY));
+
+            }
+
+            @Override
+            public void onPageSelected(int position)
+            {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state)
+            {
+
             }
         });
-        mViewPager.setAdapter(adapter);
-        mViewPager.setOffscreenPageLimit(PageAdapter.NUM_PAGES);
     }
 
 }

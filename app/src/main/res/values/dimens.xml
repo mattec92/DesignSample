@@ -1,5 +1,8 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="toolbar_height">52dp</dimen>
+    <dimen name="card_margin">10dp</dimen>
+    <dimen name="card_top_margin">62dp</dimen> <!-- toolbar_height + card_margin -->
+    <dimen name="card_corner_radius">3dp</dimen>
+    <dimen name="viewpager_padding">20dp</dimen>
+    <dimen name="negateive_viewpager_padding">-40dp</dimen>
 </resources>
