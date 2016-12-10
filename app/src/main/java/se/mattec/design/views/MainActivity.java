@@ -58,10 +58,10 @@ public class MainActivity
     @BindColor(R.color.blue_grey)
     protected int COLOR_4;
 
-    @BindColor(R.color.white)
+    @BindColor(R.color.white_trans_87)
     protected int COLOR_WHITE;
 
-    @BindColor(R.color.black)
+    @BindColor(R.color.black_trans_87)
     protected int COLOR_BLACK;
 
     @Override
@@ -160,7 +160,15 @@ public class MainActivity
         int toBlue = Color.blue(toColor);
         int diffBlue = toBlue - fromBlue;
 
-        return Color.rgb((int) (fromRed + diffRed * ratio), (int) (fromGreen + diffGreen * ratio), (int) (fromBlue + diffBlue * ratio));
+        int fromAlpha = Color.alpha(fromColor);
+        int toAlpha = Color.alpha(toColor);
+        int diffAlpha = toAlpha - fromAlpha;
+
+        return Color.argb(
+                (int) (fromAlpha + diffAlpha * ratio),
+                (int) (fromRed + diffRed * ratio),
+                (int) (fromGreen + diffGreen * ratio),
+                (int) (fromBlue + diffBlue * ratio));
     }
 
     @Override
