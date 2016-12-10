@@ -2,6 +2,7 @@ package se.mattec.design.views;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -50,6 +51,8 @@ public class PageFragment
     private int mPosition;
     private PageListener mListener;
     private ViewPagerHolder mHolder;
+
+    private boolean mIsScrollingToTop;
 
     public static PageFragment newInstance(int position)
     {
@@ -122,7 +125,7 @@ public class PageFragment
         mScrollView.setOnScrollChangeListener(new CustomScrollView.OnScrollChangeListener()
         {
 
-            int prevY = -1;
+            private int prevY = -1;
 
             @Override
             public void onScrollChanged(int x, int y, int oldX, int oldY)
@@ -137,7 +140,7 @@ public class PageFragment
 
                 if (mListener != null)
                 {
-                    mListener.onPageScrolled(mPosition, y, ratio);
+                    mListener.onPageScrolled(mPosition, y, ratio, mIsScrollingToTop);
                 }
 
                 if (ratio == 1f)
@@ -174,7 +177,20 @@ public class PageFragment
     @Override
     public void onViewPagerScrolled(float ratio)
     {
-        
+        if (!mIsScrollingToTop && mScrollView.getScrollY() > 0)
+        {
+            mIsScrollingToTop = true;
+            mScrollView.smoothScrollTo(mScrollView.getScrollX(), 0);
+            new Handler().postDelayed(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    mIsScrollingToTop = false;
+                }
+            }, 300);
+        }
     }
 
 }

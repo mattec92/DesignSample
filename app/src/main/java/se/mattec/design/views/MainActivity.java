@@ -106,6 +106,7 @@ public class MainActivity
             {
                 mContainer.setBackgroundColor(ColorUtils.mixColors(getColorForPosition(position), getColorForPosition(position + 1), positionOffset));
 
+                // Notify the page scrolled from.
                 ViewPagerListener listener;
                 if (mLastPagePosition > position)
                 {
@@ -120,7 +121,7 @@ public class MainActivity
                 {
                     if (mLastPagePosition > position)
                     {
-                        listener.onViewPagerScrolled(mLastPagePosition);
+                        listener.onViewPagerScrolled(positionOffset);
                     }
                     else
                     {
@@ -144,10 +145,10 @@ public class MainActivity
     }
 
     @Override
-    public void onPageScrolled(int position, int scrollY, float ratio)
+    public void onPageScrolled(int position, int scrollY, float ratio, boolean isScrollToTop)
     {
         //Only react to scroll events for current fragment.
-        if (mViewPager.getCurrentItem() == position)
+        if (mViewPager.getCurrentItem() == position || isScrollToTop)
         {
             int color = ColorUtils.mixColors(COLOR_WHITE, COLOR_BLACK, ratio);
             mToolbar.setTitleTextColor(color);
