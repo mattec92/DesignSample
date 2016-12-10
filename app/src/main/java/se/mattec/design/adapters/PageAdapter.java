@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import se.mattec.design.interfaces.PageListener;
 import se.mattec.design.views.PageFragment;
 
 public class PageAdapter
@@ -13,18 +12,15 @@ public class PageAdapter
 
     public static final int NUM_PAGES = 5;
 
-    private PageListener mListener;
-
-    public PageAdapter(FragmentManager fm, PageListener listener)
+    public PageAdapter(FragmentManager fm)
     {
         super(fm);
-        mListener = listener;
     }
 
     @Override
     public Fragment getItem(int position)
     {
-        return PageFragment.newInstance(position, mListener);
+        return PageFragment.newInstance(position);
     }
 
     @Override

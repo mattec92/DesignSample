@@ -1,5 +1,6 @@
 package se.mattec.design.views;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,9 +16,12 @@ import butterknife.ButterKnife;
 import se.mattec.design.R;
 import se.mattec.design.adapters.PageAdapter;
 import se.mattec.design.interfaces.PageListener;
+import se.mattec.design.interfaces.ViewPagerHolder;
+import se.mattec.design.interfaces.ViewPagerListener;
 
 public class PageFragment
         extends Fragment
+        implements ViewPagerListener
 {
 
     private static final String EXTRAS_POSITION = "EXTRAS_POSITION";
@@ -45,21 +49,24 @@ public class PageFragment
 
     private int mPosition;
     private PageListener mListener;
+    private ViewPagerHolder mHolder;
 
-    public static PageFragment newInstance(int position, PageListener listener)
+    public static PageFragment newInstance(int position)
     {
         Bundle args = new Bundle();
         args.putInt(EXTRAS_POSITION, position);
 
         PageFragment fragment = new PageFragment();
         fragment.setArguments(args);
-        fragment.setListener(listener);
         return fragment;
     }
 
-    private void setListener(PageListener listener)
+    @Override
+    public void onAttach(Context context)
     {
-        mListener = listener;
+        super.onAttach(context);
+        mListener = (PageListener) context;
+        mHolder = (ViewPagerHolder) context;
     }
 
     @Nullable
@@ -73,7 +80,23 @@ public class PageFragment
         getExtras();
         setupView();
 
+        if (mHolder != null)
+        {
+            mHolder.registerViewPagerListener(mPosition, this);
+        }
+
         return root;
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        if (mHolder != null)
+        {
+            mHolder.unregisterViewPagerListener(mPosition);
+        }
     }
 
     private void getExtras()
@@ -146,6 +169,12 @@ public class PageFragment
                 prevY = y;
             }
         });
+    }
+
+    @Override
+    public void onViewPagerScrolled(float ratio)
+    {
+        
     }
 
 }

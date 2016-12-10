@@ -1,6 +1,5 @@
 package se.mattec.design.views;
 
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +12,9 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindColor;
 import butterknife.BindDimen;
 import butterknife.BindView;
@@ -20,9 +22,13 @@ import butterknife.ButterKnife;
 import se.mattec.design.R;
 import se.mattec.design.adapters.PageAdapter;
 import se.mattec.design.interfaces.PageListener;
+import se.mattec.design.interfaces.ViewPagerHolder;
+import se.mattec.design.interfaces.ViewPagerListener;
+import se.mattec.design.utils.ColorUtils;
 
 public class MainActivity
         extends AppCompatActivity
+        implements PageListener, ViewPagerHolder
 {
 
     @BindView(R.id.container)
@@ -64,6 +70,9 @@ public class MainActivity
     @BindColor(R.color.black_trans_87)
     protected int COLOR_BLACK;
 
+    private Map<Integer, ViewPagerListener> mViewPagerListeners;
+    private int mLastPagePosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -71,6 +80,8 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        mViewPagerListeners = new HashMap<>();
 
         setupToolbar();
         setupViewPager();
@@ -83,25 +94,7 @@ public class MainActivity
 
     private void setupViewPager()
     {
-        PageAdapter adapter = new PageAdapter(getSupportFragmentManager(), new PageListener()
-        {
-
-            @Override
-            public void onPageScrolled(int position, int scrollY, float ratio)
-            {
-                //Only react to scroll events for current fragment.
-                if (mViewPager.getCurrentItem() == position)
-                {
-                    int color = mixColors(COLOR_WHITE, COLOR_BLACK, ratio);
-                    mToolbar.setTitleTextColor(color);
-                    Drawable overflowIcon = mToolbar.getOverflowIcon();
-                    if (overflowIcon != null)
-                    {
-                        overflowIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-                    }
-                }
-            }
-        });
+        PageAdapter adapter = new PageAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(PageAdapter.NUM_PAGES);
         mViewPager.setPageMargin((int) PAGE_MARGIN);
@@ -111,13 +104,35 @@ public class MainActivity
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
             {
-                mContainer.setBackgroundColor(mixColors(getColorForPosition(position), getColorForPosition(position + 1), positionOffset));
+                mContainer.setBackgroundColor(ColorUtils.mixColors(getColorForPosition(position), getColorForPosition(position + 1), positionOffset));
+
+                ViewPagerListener listener;
+                if (mLastPagePosition > position)
+                {
+                    listener = mViewPagerListeners.get(mLastPagePosition);
+                }
+                else
+                {
+                    listener = mViewPagerListeners.get(position);
+                }
+
+                if (listener != null)
+                {
+                    if (mLastPagePosition > position)
+                    {
+                        listener.onViewPagerScrolled(mLastPagePosition);
+                    }
+                    else
+                    {
+                        listener.onViewPagerScrolled(positionOffset);
+                    }
+                }
             }
 
             @Override
             public void onPageSelected(int position)
             {
-
+                mLastPagePosition = position;
             }
 
             @Override
@@ -128,47 +143,32 @@ public class MainActivity
         });
     }
 
-    private int getColorForPosition(int position)
+    @Override
+    public void onPageScrolled(int position, int scrollY, float ratio)
     {
-        switch (position)
+        //Only react to scroll events for current fragment.
+        if (mViewPager.getCurrentItem() == position)
         {
-            case 0:
-                return COLOR_0;
-            case 1:
-                return COLOR_1;
-            case 2:
-                return COLOR_2;
-            case 3:
-                return COLOR_3;
-            case 4:
-                return COLOR_4;
+            int color = ColorUtils.mixColors(COLOR_WHITE, COLOR_BLACK, ratio);
+            mToolbar.setTitleTextColor(color);
+            Drawable overflowIcon = mToolbar.getOverflowIcon();
+            if (overflowIcon != null)
+            {
+                overflowIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            }
         }
-        return COLOR_0;
     }
 
-    private int mixColors(int fromColor, int toColor, float ratio)
+    @Override
+    public void registerViewPagerListener(int position, ViewPagerListener listener)
     {
-        int fromRed = Color.red(fromColor);
-        int toRed = Color.red(toColor);
-        int diffRed = toRed - fromRed;
+        mViewPagerListeners.put(position, listener);
+    }
 
-        int fromGreen = Color.green(fromColor);
-        int toGreen = Color.green(toColor);
-        int diffGreen = toGreen - fromGreen;
-
-        int fromBlue = Color.blue(fromColor);
-        int toBlue = Color.blue(toColor);
-        int diffBlue = toBlue - fromBlue;
-
-        int fromAlpha = Color.alpha(fromColor);
-        int toAlpha = Color.alpha(toColor);
-        int diffAlpha = toAlpha - fromAlpha;
-
-        return Color.argb(
-                (int) (fromAlpha + diffAlpha * ratio),
-                (int) (fromRed + diffRed * ratio),
-                (int) (fromGreen + diffGreen * ratio),
-                (int) (fromBlue + diffBlue * ratio));
+    @Override
+    public void unregisterViewPagerListener(int position)
+    {
+        mViewPagerListeners.remove(position);
     }
 
     @Override
@@ -190,6 +190,24 @@ public class MainActivity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private int getColorForPosition(int position)
+    {
+        switch (position)
+        {
+            case 0:
+                return COLOR_0;
+            case 1:
+                return COLOR_1;
+            case 2:
+                return COLOR_2;
+            case 3:
+                return COLOR_3;
+            case 4:
+                return COLOR_4;
+        }
+        return COLOR_0;
     }
 
 }
