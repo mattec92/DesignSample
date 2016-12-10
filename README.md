@@ -2,6 +2,8 @@
 
 A sample application for testing and showcasing Android interface design.
 
+![Demo gif](/demo.gif)
+
 ## Licence
 
 Copyright 2016 Mattias Cederlund
