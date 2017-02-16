@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import se.mattec.design.R;
 import se.mattec.design.adapters.PageAdapter;
 import se.mattec.design.interfaces.PageListener;
+import se.mattec.design.interfaces.TransitionListenerImpl;
 import se.mattec.design.interfaces.ViewPagerHolder;
 import se.mattec.design.interfaces.ViewPagerListener;
 
@@ -35,6 +36,9 @@ public class PageFragment
 
     @BindView(R.id.scrollview)
     protected CustomScrollView mScrollView;
+
+    @BindView(R.id.shared_origin_view)
+    View mSharedOriginView;
 
     @BindDimen(R.dimen.card_top_margin)
     protected float CARD_TOP_MARGIN;
@@ -82,6 +86,7 @@ public class PageFragment
 
         getExtras();
         setupView();
+        setupSharedView();
 
         if (mHolder != null)
         {
@@ -89,6 +94,13 @@ public class PageFragment
         }
 
         return root;
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        mSharedOriginView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -191,6 +203,22 @@ public class PageFragment
                 }
             }, 300);
         }
+    }
+
+    private void setupSharedView()
+    {
+        mSharedOriginView.setOnClickListener(new View.OnClickListener()
+        {
+
+            @Override
+            public void onClick(View v)
+            {
+                TransitionDestinationActivity.openWithTransition(
+                        getActivity(),
+                        mSharedOriginView,
+                        new TransitionListenerImpl(mSharedOriginView));
+            }
+        });
     }
 
 }
